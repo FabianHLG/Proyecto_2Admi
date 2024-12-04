@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de la Ruta</title>
+    <link rel="stylesheet" href="../CSS/detalles.css">
+    <script src="detalles.js" defer></script>
+</head>
+<body>
+    <header>
+        <h1>Detalles de la Ruta</h1>
+    </header>
+
+    <main>
+        <section id="details-container">
+            <h2 id="route-name"></h2>
+            <form id="details-form">
+                <label for="travel-date">Seleccione el día del viaje</label>
+                <input type="date" id="travel-date" required>
+
+                <label for="travel-time">Seleccione la hora de salida</label>
+                <select id="travel-time" required>
+                    <option value="" disabled selected>Seleccione el horario</option>
+                    <option>06:00 AM</option>
+                    <option>08:00 AM</option>
+                    <option>10:00 AM</option>
+                    <option>12:00 PM</option>
+                    <option>02:00 PM</option>
+                    <option>04:00 PM</option>
+                </select>
+
+                <label for="seats">Cantidad de personas sentadas</label>
+                <input type="number" id="seats" value="1" min="1" max="10">
+
+                <p><strong>Disponibles:</strong> <span id="available-seats">10</span></p>
+
+                <label for="boarding-point">Parada donde abordará</label>
+                <input type="text" id="boarding-point" placeholder="San Isidro" required>
+
+                <button type="button" onclick="addToCart()">Agregar al carrito</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2024 YourBus. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const routeName = localStorage.getItem("selectedRoute");
+        document.getElementById("route-name").textContent = `Ruta: ${routeName}`;
+    });
+
+    function addToCart() {
+        const travelDate = document.getElementById("travel-date").value;
+        const travelTime = document.getElementById("travel-time").value;
+        const seats = parseInt(document.getElementById("seats").value, 10);
+        const boardingPoint = document.getElementById("boarding-point").value;
+        const pricePerSeat = 4000;
+        const totalPrice = seats * pricePerSeat;
+
+        if (!travelDate || !travelTime || !boardingPoint || isNaN(seats)) {
+            alert("Por favor, complete todos los campos correctamente.");
+            return;
+        }
+
+        const cartItem = {
+            route: localStorage.getItem("selectedRoute"),
+            travelDate,
+            travelTime,
+            seats,
+            boardingPoint,
+            price: totalPrice,
+        };
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart.push(cartItem);
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        alert("Ruta agregada al carrito.");
+        window.location.href = "index.html";
+    }
+</script>
+
+
+

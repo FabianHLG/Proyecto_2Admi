@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito</title>
+    <link rel="stylesheet" href="../CSS/carrito.css">
+</head>
+<body>
+<header>
+    <h1>Carrito de Tickets</h1>
+</header>
+<main>
+    <div id="cart-container"></div>
+<h2 id="total-price">Total: $0</h2>
+
+<div class="checkout-form">
+    <label for="name">Nombre:</label>
+    <input type="text" id="name" placeholder="Tu nombre" required />
+
+    <label for="email">Correo Electrónico:</label>
+    <input type="email" id="email" placeholder="Tu correo electrónico" required />
+
+    <!-- Botón para continuar con el pago -->
+<div class="continue-payment">
+    <a href="metodopago.html" class="continue-button">Continuar con el Pago</a>
+</div>
+
+</div>
+
+<script>
+    function continueToPayment() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+
+        if (!name || !email) {
+            alert("Por favor, complete todos los campos.");
+            return;
+        }
+
+        alert("Gracias por tu compra. Serás redirigido al portal de pago.");
+        // Redirigir al portal de pago o realizar otra acción
+    }
+</script>
+</main>
+<footer>
+    <p>© 2024 YourBus</p>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const cartContainer = document.getElementById("cart-container");
+        const totalElement = document.getElementById("total-price");
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let totalPrice = 0;
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = "<p>No hay rutas en el carrito.</p>";
+            totalElement.textContent = "Total: $0";
+            return;
+        }
+
+        cartContainer.innerHTML = ""; // Limpiar contenido previo
+
+        cart.forEach((item, index) => {
+            totalPrice += item.price;
+
+            // Crear una tarjeta para cada ruta
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            card.innerHTML = `
+                <h3>${item.route}</h3>
+                <p>Fecha: ${item.travelDate}</p>
+                <p>Hora: ${item.travelTime}</p>
+                <p>Asientos: ${item.seats}</p>
+                <p>Parada: ${item.boardingPoint}</p>
+                <p>Precio: $${item.price}</p>
+                <button class="btn btn-danger" onclick="removeItem(${index})">Eliminar</button>
+            `;
+
+            cartContainer.appendChild(card);
+        });
+
+        totalElement.textContent = `Total: $${totalPrice}`;
+    });
+
+    function removeItem(index) {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        location.reload(); // Recargar la página para reflejar cambios
+    }
+</script>
+
+</body>
+</html>
+
+<script>
+    // Verificar si el carrito tiene artículos antes de redirigir
+document.querySelector(".continue-button").addEventListener("click", function(event) {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (cart.length === 0) {
+        alert("El carrito está vacío. Agrega rutas al carrito antes de continuar.");
+        event.preventDefault();  // Impide la redirección si el carrito está vacío
+    }
+});
+</script>
+
+<script>
+document.getElementById("name").addEventListener("input", function(event) {
+    localStorage.setItem("userName", event.target.value);
+});
+
+document.getElementById("email").addEventListener("input", function(event) {
+    localStorage.setItem("userEmail", event.target.value);
+});
+
+</script>

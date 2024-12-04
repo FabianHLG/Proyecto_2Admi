@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YourBus - Venta de Tiquetes</title>
+
+    <!-- Estilos CSS -->
+    <link rel="stylesheet" href="../CSS/index.css">
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <h1>YourBus</h1>
+        <p>Compra tus tiquetes de bus de forma rápida y segura</p>
+    </header>
+
+    <main>
+        <section id="routes-container">
+            <!-- Las tarjetas de rutas se generarán dinámicamente aquí -->
+        </section>
+        <!-- Botón flotante para el carrito -->
+        <div id="cart-button" class="cart-button">
+            <i class="fas fa-shopping-cart"></i>
+            <span id="cart-count">0</span>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 YourBus. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
+
+<script>
+    const routes = [
+    "San José - Pérez Zeledón",
+    "San José - Heredia",
+    "San José - Alajuela",
+    "San José - Cartago",
+    "San José - Limón",
+    "San José - Puntarenas",
+    "San José - Guanacaste",
+    "San José - Jacó",
+    "San José - Monteverde",
+    "San José - San Carlos"
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+    const routesContainer = document.getElementById("routes-container");
+
+    // Renderizar las tarjetas
+    routes.forEach((route, index) => {
+        const card = document.createElement("div");
+        card.className = "route-card";
+        card.innerHTML = `
+            <i class="fas fa-bus"></i>
+            <h3>${route}</h3>
+            <button onclick="goToDetails(${index})">Detalles</button>
+        `;
+        routesContainer.appendChild(card);
+    });
+});
+
+// Función para redirigir a la página de detalles
+function goToDetails(index) {
+    localStorage.setItem("selectedRoute", routes[index]); // Guardar ruta seleccionada
+    window.location.href = "detalles.html";
+}
+</script>
+
+<script>
+    // Obtener el contador del carrito
+    const cartButton = document.querySelector("#cart-button");
+    const cartCountElement = document.querySelector("#cart-count");
+
+    // Actualizar contador desde localStorage
+    function updateCartCount() {
+        const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+        cartCountElement.textContent = cartItems.length;
+    }
+
+    // Redirigir a la página de carrito al hacer clic en el botón flotante
+    cartButton.addEventListener("click", () => {
+        window.location.href = "carrito.html";
+    });
+
+    // Inicializar el contador
+    updateCartCount();
+</script>

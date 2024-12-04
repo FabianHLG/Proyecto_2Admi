@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación</title>
+    <link rel="stylesheet" href="../CSS/confirmacion.css">
+</head>
+
+<body>
+    <header>
+        <h1>¡Reserva Confirmada!</h1>
+    </header>
+    <main>
+        <section class="ticket">
+            <h2>Ticket de Confirmación</h2>
+            <p><strong>ID de Documento:</strong> <span id="ticket-id"></span></p>
+            <div class="ticket-info">
+                <p><strong>Nombre:</strong> <span id="user-name"></span></p>
+                <p><strong>Correo:</strong> <span id="user-email"></span></p>
+                <p><strong>Ruta:</strong> <span id="route"></span></p>
+                <p><strong>Fecha:</strong> <span id="travel-date"></span></p>
+                <p><strong>Hora:</strong> <span id="travel-time"></span></p>
+                <p><strong>Punto de Abordaje:</strong> <span id="boarding-point"></span></p>
+                <p><strong>Asientos:</strong> <span id="seats"></span></p>
+                <p><strong>Total:</strong> <span id="total"></span></p>
+            </div>
+            <p class="success-message">¡Todo fue un éxito! Gracias por confiar en nosotros.</p>
+        </section>
+        <button id="back-home" onclick="goToHome()">Volver al Inicio</button>
+    </main>
+    <footer>
+        <p>© 2024 Transporte Seguro S.A. Todos los derechos reservados.</p>
+    </footer>
+    <script src="confirmacion.js"></script>
+</body>
+
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Generar un ID único para el ticket
+        const generateTicketID = () => {
+            const timestamp = new Date().getTime();
+            const randomNumber = Math.floor(Math.random() * 10000);
+            return `TICKET-${timestamp}-${randomNumber}`;
+        };
+
+        // Recuperar datos del localStorage
+        const userName = localStorage.getItem("userName");
+        const userEmail = localStorage.getItem("userEmail");
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+        // Calcular el total
+        let total = 0;
+        cart.forEach(item => {
+            total += item.seats * 4000; // Precio por asiento: $10
+        });
+
+        // Mostrar datos en el HTML
+        document.getElementById("ticket-id").textContent = generateTicketID();
+        document.getElementById("user-name").textContent = userName || "Sin nombre";
+        document.getElementById("user-email").textContent = userEmail || "Sin correo";
+
+        if (cart.length > 0) {
+            const { route, travelDate, travelTime, seats, boardingPoint } = cart[0]; // Mostrar el primer ticket como ejemplo
+            document.getElementById("route").textContent = route;
+            document.getElementById("travel-date").textContent = travelDate;
+            document.getElementById("travel-time").textContent = travelTime;
+            document.getElementById("boarding-point").textContent = boardingPoint;
+            document.getElementById("seats").textContent = seats;
+        } else {
+            document.getElementById("route").textContent = "No hay datos de la ruta.";
+            document.getElementById("travel-date").textContent = "-";
+            document.getElementById("travel-time").textContent = "-";
+            document.getElementById("boarding-point").textContent = "-";
+            document.getElementById("seats").textContent = "0";
+        }
+
+        document.getElementById("total").textContent = `$${total.toFixed(2)}`;
+    });
+
+</script>
+
+<script>
+    function goToHome() {
+    // Limpia el carrito del localStorage
+    localStorage.removeItem("cart");
+
+    // Redirige a la página de inicio
+    window.location.href = "index.html";
+}
+</script>

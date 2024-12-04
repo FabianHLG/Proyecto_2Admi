@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Pago - YourBus</title>
+    <link rel="stylesheet" href="../CSS/metodopago.css">
+    <link rel="icon" href="icon.png">
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Detalles de tu compra</h1>
+    </header>
+
+    <!-- Mostrar nombre y correo -->
+    <section class="user-info">
+        <h2>Información del usuario</h2>
+        <p><strong>Nombre:</strong> <span id="user-name-display"></span></p>
+        <p><strong>Correo electrónico:</strong> <span id="user-email-display"></span></p>
+    </section>
+
+    <!-- Detalles de las rutas seleccionadas -->
+    <section class="order-summary">
+        <h2>Resumen de tus rutas</h2>
+        <div class="order-items">
+            <!-- Las rutas se agregan dinámicamente con JavaScript -->
+        </div>
+        <div class="total-price">
+            <p>Total a pagar: <span id="total-amount"></span></p>
+        </div>
+    </section>
+
+    <!-- Métodos de Pago -->
+    <section class="payment-methods">
+        <h2>Selecciona un método de pago</h2>
+        <div class="payment-option" onclick="showCardDetails()">
+            <i class="fa fa-credit-card"></i> Tarjeta de Crédito
+        </div>
+        <div class="payment-option" onclick="showPaypalDetails()">
+            <i class="fa fa-paypal"></i> PayPal
+        </div>
+        <div class="payment-option" onclick="showBankDetails()">
+            <i class="fa fa-university"></i> Depósito Bancario
+        </div>
+
+        <!-- Detalles de la tarjeta de crédito (desplegable) -->
+        <div id="card-details" class="payment-details">
+            <label for="card-number">Número de tarjeta:</label>
+            <input type="text" id="card-number" value="1234 5678 9876 5432" readonly>
+            <label for="card-holder">Titular de la tarjeta:</label>
+            <input type="text" id="card-holder" value="Fabian Leiton" readonly>
+            <label for="expiry-date">Fecha de vencimiento:</label>
+            <input type="text" id="expiry-date" value="12/25" readonly>
+            <label for="cvv">CVV:</label>
+            <input type="text" id="cvv" value="123" readonly>
+            <button class="pay-button" onclick="redirectToConfirmation()">Pagar con Tarjeta</button>
+        </div>
+
+        <!-- Detalles de PayPal (desplegable) -->
+        <div id="paypal-details" class="payment-details">
+            <label for="paypal-email">Correo electrónico de PayPal:</label>
+            <input type="email" id="paypal-email" value="fabian@paypal.com" readonly>
+            <button class="pay-button" onclick="redirectToConfirmation()" >Pagar con PayPal</button>
+        </div>
+
+        <!-- Detalles de depósito bancario (desplegable) -->
+        <div id="bank-details" class="payment-details">
+            <label for="bank-account">Cuenta bancaria:</label>
+            <input type="text" id="bank-account" value="123-456-789" readonly>
+            <label for="bank-name">Banco:</label>
+            <input type="text" id="bank-name" value="Banco Nacional" readonly>
+            <button class="pay-button" onclick="redirectToConfirmation()" >Pagar con Depósito Bancario</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 YourBus. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+
+</html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Mostrar los datos del usuario (nombre y correo)
+        const userName = localStorage.getItem("userName");
+        const userEmail = localStorage.getItem("userEmail");
+
+        // Si hay datos en el localStorage, los mostramos
+        if (userName && userEmail) {
+            document.getElementById("user-name-display").textContent = userName;
+            document.getElementById("user-email-display").textContent = userEmail;
+        }
+
+        // Mostrar los detalles de la tarjeta
+        function showCardDetails() {
+            document.getElementById("card-details").style.display = "block";
+            document.getElementById("paypal-details").style.display = "none";
+            document.getElementById("bank-details").style.display = "none";
+        }
+
+        // Mostrar los detalles de PayPal
+        function showPaypalDetails() {
+            document.getElementById("card-details").style.display = "none";
+            document.getElementById("paypal-details").style.display = "block";
+            document.getElementById("bank-details").style.display = "none";
+        }
+
+        // Mostrar los detalles de Depósito Bancario
+        function showBankDetails() {
+            document.getElementById("card-details").style.display = "none";
+            document.getElementById("paypal-details").style.display = "none";
+            document.getElementById("bank-details").style.display = "block";
+        }
+
+        // Llamar las funciones para mostrar los métodos de pago al hacer clic
+        window.showCardDetails = showCardDetails;
+        window.showPaypalDetails = showPaypalDetails;
+        window.showBankDetails = showBankDetails;
+
+        // Mostrar el resumen de la compra con rutas y precios
+        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const orderItemsContainer = document.querySelector(".order-items");
+        let total = 0;
+
+        cart.forEach(item => {
+            const route = item.route;
+            const travelDate = item.travelDate;
+            const travelTime = item.travelTime;
+            const seats = item.seats;
+            const boardingPoint = item.boardingPoint;
+
+            const routeElement = document.createElement("div");
+            routeElement.classList.add("order-item");
+            routeElement.innerHTML = `
+            <p><strong>Ruta:</strong> ${route}</p>
+            <p><strong>Fecha:</strong> ${travelDate}</p>
+            <p><strong>Hora:</strong> ${travelTime}</p>
+            <p><strong>Asientos:</strong> ${seats}</p>
+            <p><strong>Punto de abordaje:</strong> ${boardingPoint}</p>
+        `;
+            orderItemsContainer.appendChild(routeElement);
+
+            total += seats * 4000;
+        });
+
+        // Mostrar el total
+        document.getElementById("total-amount").innerText = `$${total.toFixed(2)}`;
+    });
+</script>
+
+<script>
+    function redirectToConfirmation() {
+    window.location.href = "confirmacion.html";
+}
+</script>
